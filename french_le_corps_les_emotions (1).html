@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>French Le Corps & Les Emotions</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap');
+        body { font-family: 'Outfit', sans-serif; background-color: #fcfcfc; color: #1e293b; }
+        .nav-sticky { position: sticky; top: 0; z-index: 100; transition: all 0.3s ease; }
+        .unit-section { padding-top: 4rem; padding-bottom: 4rem; border-bottom: 1px solid #f1f5f9; }
+        .card { background: white; border-radius: 24px; border: 1px solid #e2e8f0; padding: 2.5rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); }
+    </style>
+</head>
+<body>
+
+    <nav id="navbar" class="nav-sticky bg-black text-white py-4 px-8 shadow-lg">
+        <div class="max-w-6xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center font-bold text-white text-xs">FR</div>
+                <h1 class="font-bold text-lg tracking-tight">French Le Corps & Les Emotions</h1>
+            </div>
+            <div class="hidden md:flex gap-6 text-sm font-medium">
+                <a href="#le-corps" class="hover:text-blue-400">Le Corps</a>
+                <a href="#la-tete" class="hover:text-blue-400">La Tête</a>
+                <a href="#vocab" class="hover:text-blue-400">Vocabulary</a>
+                <a href="#quiz" class="hover:text-blue-400">Quiz</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-6xl mx-auto px-4">
+        
+        <section id="le-corps" class="unit-section">
+            <div class="card border-l-8 border-l-blue-500">
+                <h2 class="text-3xl font-bold mb-8 text-slate-900">Le Corps (The Body)</h2>
+                <div id="bodyVocab" class="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm"></div>
+            </div>
+        </section>
+
+        <section id="la-tete" class="unit-section">
+            <div class="card border-l-8 border-l-emerald-500">
+                <h2 class="text-3xl font-bold mb-8 text-slate-900">La Tête (The Head)</h2>
+                <div id="headVocab" class="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm"></div>
+            </div>
+        </section>
+
+        <section id="vocab" class="unit-section">
+            <div class="card">
+                <h2 class="text-3xl font-bold mb-8">Core Vocabulary Dossier</h2>
+                <table class="w-full text-left">
+                    <tbody id="vocabTableBody" class="divide-y divide-slate-100"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="quiz" class="unit-section">
+            <div class="card bg-slate-900 text-white">
+                <h2 class="text-3xl font-bold mb-8">Quiz Engine</h2>
+                <div class="flex flex-col md:flex-row gap-4 mb-8">
+                    <select id="topicSelect" class="p-4 bg-white text-slate-900 rounded-xl w-full font-semibold"><option value="emotions">Grammar & Emotions</option></select>
+                    <select id="numSelect" class="p-4 bg-white text-slate-900 rounded-xl font-semibold"><option value="5">5 Questions</option><option value="10">10 Questions</option></select>
+                    <button onclick="startQuiz()" class="px-8 py-4 bg-blue-600 rounded-xl font-bold hover:bg-blue-500">Start Quiz</button>
+                </div>
+                <div id="quizArea" class="hidden p-6 bg-white text-slate-900 rounded-2xl"></div>
+                <div id="reviewArea" class="mt-8 hidden p-6 bg-white text-slate-900 rounded-2xl border border-blue-100"></div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const data = {
+            vocab: [{ en: "In front", fr: "devant" }, { en: "Behind", fr: "derrière" }, { en: "Quick", fr: "vite" }, { en: "Slowly", fr: "lentement" }, { en: "Left", fr: "gauche" }, { en: "Right", fr: "droit" }],
+            body: [
+                { fr: "le dos", en: "back" }, { fr: "le bras", en: "arm" }, { fr: "la main", en: "hand" }, 
+                { fr: "la jambe", en: "leg" }, { fr: "le pied", en: "foot" }, { fr: "le ventre", en: "belly" },
+                { fr: "la poitrine", en: "chest" }, { fr: "l'épaule", en: "shoulder" }, { fr: "le coude", en: "elbow" },
+                { fr: "le doigt", en: "finger" }, { fr: "le genou", en: "knee" }, { fr: "l'orteil", en: "toe" }
+            ],
+            head: [
+                { fr: "la tête", en: "head" }, { fr: "les yeux", en: "eyes" }, { fr: "le nez", en: "nose" }, 
+                { fr: "la bouche", en: "mouth" }, { fr: "les cheveux", en: "hair" }, { fr: "l'oreille", en: "ear" },
+                { fr: "l'œil", en: "eye (singular)" }, { fr: "la joue", en: "cheek" }, { fr: "les lèvres", en: "lips" },
+                { fr: "le cou", en: "neck" }, { fr: "le visage", en: "face" }
+            ],
+            emotions: [{ fr: "content", en: "happy" }, { fr: "fatigué", en: "tired" }, { fr: "inquiet", en: "worried" }, { fr: "fâché", en: "angry" }, { fr: "triste", en: "sad" }],
+            subjects: [{ fr: "Je", en: "I", g: "m" }, { fr: "Ma sœur", en: "My sister", g: "f" }, { fr: "Nous", en: "We", g: "m" }, { fr: "Elles", en: "They (f)", g: "f" }]
+        };
+
+        function init() {
+            data.vocab.forEach(i => document.getElementById('vocabTableBody').innerHTML += `<tr><td class="py-4 text-slate-500">${i.en}</td><td class="py-4 font-bold text-blue-600 text-lg">${i.fr}</td></tr>`);
+            data.body.forEach(i => document.getElementById('bodyVocab').innerHTML += `<div class="p-4 bg-blue-50 rounded-2xl border border-blue-100 font-semibold text-blue-900">${i.fr} <span class="text-slate-400 font-normal ml-1 text-xs">(${i.en})</span></div>`);
+            data.head.forEach(i => document.getElementById('headVocab').innerHTML += `<div class="p-4 bg-emerald-50 rounded-2xl border border-emerald-100 font-semibold text-emerald-900">${i.fr} <span class="text-slate-400 font-normal ml-1 text-xs">(${i.en})</span></div>`);
+        }
+
+        let currentQuiz = [], currentIndex = 0, score = 0, incorrect = [];
+
+        function startQuiz() {
+            const num = parseInt(document.getElementById('numSelect').value);
+            currentQuiz = []; score = 0; currentIndex = 0; incorrect = [];
+            for(let i=0; i<num; i++) {
+                const s = data.subjects[Math.floor(Math.random()*data.subjects.length)];
+                const e = data.emotions[Math.floor(Math.random()*data.emotions.length)];
+                let adj = e.fr + (s.g === 'f' ? 'e' : '');
+                currentQuiz.push({ q: `Translate: '${s.en} is ${e.en}'`, a: `${s.fr} est ${adj}`, opts: [`${s.fr} est ${adj}`, `${s.fr} est ${e.fr}`, `${s.fr} sont ${adj}`, `Je suis ${adj}`] });
+            }
+            renderQuiz();
+        }
+
+        function renderQuiz() {
+            const q = currentQuiz[currentIndex];
+            const area = document.getElementById('quizArea');
+            area.classList.remove('hidden');
+            area.innerHTML = `<p class="font-bold mb-6 text-lg">${q.q}</p>` + q.opts.map(o => `<button onclick="check('${o}')" class="block w-full p-4 mb-3 bg-slate-50 hover:bg-blue-50 border border-slate-200 rounded-xl text-left font-medium transition">${o}</button>`).join('');
+        }
+
+        function check(ans) {
+            if(ans !== currentQuiz[currentIndex].a) incorrect.push({q: currentQuiz[currentIndex].q, corr: currentQuiz[currentIndex].a, user: ans});
+            else score++;
+            currentIndex++;
+            if(currentIndex < currentQuiz.length) renderQuiz();
+            else {
+                document.getElementById('quizArea').classList.add('hidden');
+                const rev = document.getElementById('reviewArea');
+                rev.classList.remove('hidden');
+                rev.innerHTML = `<h3 class='font-bold text-xl mb-4'>Final Score: ${score}/${currentQuiz.length}</h3>` + incorrect.map(i => `<p class='text-red-600 text-sm mb-2 border-b pb-2'>${i.q}<br><span class='text-slate-600'>Your answer: ${i.user} | Correct: ${i.corr}</span></p>`).join('');
+            }
+        }
+        init();
+    </script>
+</body>
+</html>
